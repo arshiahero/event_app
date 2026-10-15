@@ -1,0 +1,1320 @@
+
+COMPREHENSIVE FLUTTER APP BUILD PROMPT — "event." Event Discovery Platform
+🎯 PROJECT OVERVIEW
+Build a premium, luxury-grade event discovery and ticket booking application called "event." using Flutter. The app is inspired by the Fever event platform. It must run on Android, iOS, and Web with a fully responsive layout. The design follows a dark luxury theme with deep teal/dark green backgrounds, golden/amber accents, and rich atmospheric imagery. Every screen, every component, every spacing, every shadow, every animation, and every micro-interaction described below must be implemented exactly as specified. The language is English, the layout direction is LTR (left-to-right), and the currency is British Pounds (£).
+
+🏗️ ARCHITECTURE & TECH STACK
+Complete Packages (pubspec.yaml):
+yaml
+name: event_app
+description: "event. — Discover extraordinary experiences and book tickets"
+publish_to: 'none'
+version: 1.0.0+1
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  # Routing
+  go_router: ^14.8.1
+  # Responsive
+  responsive_framework: ^1.5.1
+  # Storage & Security
+  flutter_secure_storage: ^9.2.4
+  # Networking
+  dio: ^5.7.0
+  connectivity_plus: ^6.1.1
+  # Images
+  cached_network_image: ^3.4.1
+  flutter_svg: ^2.0.17
+  photo_view: ^0.15.0              # Gallery zoom
+  # Typography
+  google_fonts: ^6.2.1             # DM Sans or Plus Jakarta Sans
+  # UI Components
+  shimmer: ^3.0.0                  # Loading skeletons
+  smooth_page_indicator: ^1.2.1    # Carousel dots
+  flutter_animate: ^4.5.2          # Micro-animations
+  flutter_rating_bar: ^4.0.1       # Star ratings
+  readmore: ^3.0.0                 # Read more / less text
+  flutter_staggered_grid_view: ^0.7.0  # Staggered grids
+  # Maps
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  # Utilities
+  intl: ^0.19.0                    # Date/currency formatting
+  url_launcher: ^6.3.1             # External links
+  share_plus: ^10.1.4              # Share functionality
+  freezed_annotation: ^2.4.6       # Immutable models
+  json_annotation: ^4.9.0          # JSON serialization
+  equatable: ^2.0.7                # Value equality
+  dartz: ^0.10.1                   # Either type for error handling
+  logger: ^2.5.0                   # Debug logging
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.9.0
+  riverpod_generator: ^2.6.3
+  custom_lint: ^0.7.0
+  riverpod_lint: ^2.6.3
+  flutter_lints: ^5.0.0
+Architecture Pattern — Clean Architecture + Feature-First
+lib/
+├── main.dart                              # Entry point — ProviderScope wrapper
+├── app.dart                               # MaterialApp.router + Theme + Responsive
+│
+├── core/
+│   ├── constants/
+│   │   ├── app_constants.dart             # General constants
+│   │   ├── api_constants.dart             # API URLs
+│   │   └── asset_paths.dart               # Asset paths
+│   │
+│   ├── theme/
+│   │   ├── app_theme.dart                 # Full ThemeData with ColorScheme, TextTheme
+│   │   ├── app_colors.dart                # Every color constant
+│   │   ├── app_typography.dart            # Every TextStyle with DM Sans
+│   │   ├── app_dimensions.dart            # Spacing, radius, sizes
+│   │   ├── app_shadows.dart               # Box shadows
+│   │   ├── app_gradients.dart             # Gradients
+│   │   └── app_decorations.dart           # Shared BoxDecorations (card, input, etc.)
+│   │
+│   ├── router/
+│   │   ├── app_router.dart                # Full GoRouter config
+│   │   ├── route_names.dart               # Named route constants
+│   │   ├── route_transitions.dart         # Custom page transition animations
+│   │   └── auth_guard.dart                # GoRouter redirect for auth protection
+│   │
+│   ├── network/
+│   │   ├── dio_client.dart                # Dio setup + Interceptors
+│   │   ├── api_endpoints.dart             # Endpoints
+│   │   ├── auth_interceptor.dart          # Auto JWT injection
+│   │   ├── error_interceptor.dart         # Network error handling
+│   │   ├── api_response.dart              # Generic API response model
+│   │   └── network_exceptions.dart        # Custom network exceptions
+│   │
+│   ├── storage/
+│   │   ├── secure_storage_service.dart    # FlutterSecureStorage wrapper
+│   │   ├── storage_keys.dart              # Storage key constants
+│   │   └── local_storage_service.dart     # SharedPreferences for non-sensitive data
+│   │
+│   ├── utils/
+│   │   ├── currency_formatter.dart        # Format price: £27.00
+│   │   ├── date_formatter.dart            # Format dates: Sat 24 Oct · 19:00
+│   │   ├── responsive_utils.dart          # Responsive helpers
+│   │   ├── validators.dart                # Form validation
+│   │   ├── debouncer.dart                 # Debounce for search
+│   │   └── extensions/
+│   │       ├── context_extensions.dart    # Theme, MediaQuery, Navigator extensions
+│   │       ├── string_extensions.dart     # String helpers
+│   │       ├── widget_extensions.dart     # Padding, margin helpers
+│   │       └── number_extensions.dart     # toCurrency, toRating
+│   │
+│   └── widgets/                           # Shared reusable widgets
+│       ├── app_bar/
+│       │   ├── event_app_bar.dart         # Custom mobile app bar
+│       │   └── web_nav_bar.dart           # Desktop top navigation bar
+│       ├── bottom_nav/
+│       │   └── event_bottom_nav.dart      # Bottom navigation bar
+│       ├── scaffold/
+│       │   └── responsive_scaffold.dart   # Responsive scaffold (bottom nav / top nav)
+│       ├── buttons/
+│       │   ├── primary_button.dart        # Gold filled pill button
+│       │   ├── outline_button.dart        # Outlined pill button
+│       │   ├── text_button_gold.dart      # Gold text button ("Explore all →")
+│       │   └── icon_button_circle.dart    # Circular icon button
+│       ├── cards/
+│       │   ├── event_card.dart            # Standard event card
+│       │   ├── trending_card.dart         # Numbered trending card
+│       │   ├── inspiration_card.dart      # Landscape inspiration card
+│       │   ├── category_tile.dart         # Category tile (thumbnail + name)
+│       │   ├── mood_card.dart             # Mood card with colored bottom accent
+│       │   ├── search_result_card.dart    # Horizontal search result card
+│       │   └── ticket_card.dart           # Ticket card
+│       ├── chips/
+│       │   ├── category_chip.dart         # Category filter chip (icon + text)
+│       │   ├── search_chip.dart           # Popular search chip
+│       │   ├── interest_chip.dart         # Interest chip (with checkmark)
+│       │   ├── date_chip.dart             # Date chip
+│       │   └── time_slot_chip.dart        # Time slot selection chip
+│       ├── inputs/
+│       │   ├── search_bar_widget.dart     # Search bar
+│       │   ├── quantity_selector.dart     # +/- quantity counter
+│       │   ├── price_range_slider.dart    # Price slider
+│       │   └── custom_dropdown.dart       # Custom styled dropdown
+│       ├── images/
+│       │   ├── cached_image.dart          # Cached image with shimmer placeholder
+│       │   ├── image_gallery.dart         # Image gallery with thumbnail strip
+│       │   └── hero_image_card.dart       # Hero image card with gradient overlay
+│       ├── modals/
+│       │   ├── city_selector_modal.dart   # City selection modal
+│       │   ├── filter_modal.dart          # Filter bottom sheet
+│       │   ├── booking_confirmation_modal.dart  # Booking confirmation dialog
+│       │   └── success_modal.dart         # Success dialog
+│       ├── sections/
+│       │   ├── section_header.dart        # Section header (gold label + title + link)
+│       │   └── trust_badges.dart          # Trust badges row
+│       ├── loading/
+│       │   ├── shimmer_card.dart          # Card loading skeleton
+│       │   ├── shimmer_list.dart          # List skeleton
+│       │   └── loading_overlay.dart       # Loading overlay
+│       ├── empty/
+│       │   └── empty_state.dart           # Empty state widget
+│       └── error/
+│           └── error_widget.dart          # Error widget with retry button
+│
+├── features/
+│   ├── auth/
+│   │   ├── data/
+│   │   │   ├── models/
+│   │   │   │   ├── user_model.dart
+│   │   │   │   ├── user_model.freezed.dart
+│   │   │   │   ├── user_model.g.dart
+│   │   │   │   ├── auth_token_model.dart
+│   │   │   │   └── login_request.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── auth_repository_impl.dart
+│   │   │   └── datasources/
+│   │   │       ├── auth_remote_datasource.dart
+│   │   │       └── auth_local_datasource.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   └── user.dart
+│   │   │   └── repositories/
+│   │   │       └── auth_repository.dart
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       │   └── auth_provider.dart
+│   │       └── screens/
+│   │           ├── login_screen.dart
+│   │           ├── register_screen.dart
+│   │           └── splash_screen.dart
+│   │
+│   ├── home/
+│   │   ├── data/
+│   │   │   ├── models/
+│   │   │   │   ├── event_model.dart
+│   │   │   │   ├── event_model.freezed.dart
+│   │   │   │   ├── event_model.g.dart
+│   │   │   │   ├── carousel_item_model.dart
+│   │   │   │   ├── category_model.dart
+│   │   │   │   └── venue_model.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── home_repository_impl.dart
+│   │   │   └── datasources/
+│   │   │       ├── home_remote_datasource.dart
+│   │   │       └── mock/
+│   │   │           └── home_mock_datasource.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   ├── event.dart
+│   │   │   │   ├── carousel_item.dart
+│   │   │   │   └── category.dart
+│   │   │   └── repositories/
+│   │   │       └── home_repository.dart
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       │   ├── home_provider.dart
+│   │       │   ├── carousel_provider.dart
+│   │       │   ├── category_provider.dart
+│   │       │   └── favorites_provider.dart
+│   │       ├── screens/
+│   │       │   └── home_screen.dart
+│   │       └── widgets/
+│   │           ├── home_app_bar.dart
+│   │           ├── hero_section.dart
+│   │           ├── home_search_bar.dart
+│   │           ├── category_chips_row.dart
+│   │           ├── hero_carousel.dart
+│   │           ├── hero_carousel_card.dart
+│   │           ├── trust_badges_row.dart
+│   │           ├── trending_section.dart
+│   │           ├── trending_event_card.dart
+│   │           ├── inspiration_section.dart
+│   │           ├── inspiration_card.dart
+│   │           ├── more_events_section.dart
+│   │           └── more_event_card.dart
+│   │
+│   ├── search/
+│   │   ├── data/
+│   │   │   ├── models/
+│   │   │   │   ├── search_result_model.dart
+│   │   │   │   └── mood_model.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── search_repository_impl.dart
+│   │   │   └── datasources/
+│   │   │       └── search_remote_datasource.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   ├── search_result.dart
+│   │   │   │   └── mood.dart
+│   │   │   └── repositories/
+│   │   │       └── search_repository.dart
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       │   ├── search_provider.dart
+│   │       │   ├── search_query_provider.dart
+│   │       │   └── mood_provider.dart
+│   │       ├── screens/
+│   │       │   ├── search_screen.dart
+│   │       │   └── search_results_screen.dart
+│   │       └── widgets/
+│   │           ├── search_header.dart
+│   │           ├── search_input.dart
+│   │           ├── list_map_toggle.dart
+│   │           ├── popular_searches_section.dart
+│   │           ├── browse_by_mood_section.dart
+│   │           ├── mood_card.dart
+│   │           └── search_result_tile.dart
+│   │
+│   ├── discover/
+│   │   ├── data/
+│   │   │   ├── models/
+│   │   │   │   └── discover_category_model.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── discover_repository_impl.dart
+│   │   │   └── datasources/
+│   │   │       └── discover_remote_datasource.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   └── discover_category.dart
+│   │   │   └── repositories/
+│   │   │       └── discover_repository.dart
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       │   ├── discover_provider.dart
+│   │       │   └── discover_filter_provider.dart
+│   │       ├── screens/
+│   │       │   └── discover_screen.dart
+│   │       └── widgets/
+│   │           ├── discover_header.dart
+│   │           ├── discover_search_bar.dart
+│   │           ├── discover_filter_chips.dart
+│   │           ├── popular_searches_chips.dart
+│   │           ├── category_grid.dart
+│   │           ├── category_grid_tile.dart
+│   │           ├── handpicked_section.dart
+│   │           └── handpicked_event_card.dart
+│   │
+│   ├── event_detail/
+│   │   ├── data/
+│   │   │   ├── models/
+│   │   │   │   ├── event_detail_model.dart
+│   │   │   │   ├── review_model.dart
+│   │   │   │   ├── faq_model.dart
+│   │   │   │   ├── ticket_type_model.dart
+│   │   │   │   └── time_slot_model.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── event_detail_repository_impl.dart
+│   │   │   └── datasources/
+│   │   │       └── event_detail_remote_datasource.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   ├── event_detail.dart
+│   │   │   │   ├── review.dart
+│   │   │   │   ├── faq_item.dart
+│   │   │   │   └── ticket_type.dart
+│   │   │   └── repositories/
+│   │   │       └── event_detail_repository.dart
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       │   ├── event_detail_provider.dart
+│   │       │   ├── booking_provider.dart
+│   │       │   ├── image_gallery_provider.dart
+│   │       │   └── faq_expansion_provider.dart
+│   │       ├── screens/
+│   │       │   └── event_detail_screen.dart
+│   │       └── widgets/
+│   │           ├── event_back_nav.dart
+│   │           ├── event_header_info.dart
+│   │           ├── event_image_gallery.dart
+│   │           ├── event_feature_badges.dart
+│   │           ├── event_about_section.dart
+│   │           ├── event_highlights_section.dart
+│   │           ├── event_good_to_know.dart
+│   │           ├── event_venue_section.dart
+│   │           ├── event_venue_map.dart
+│   │           ├── event_reviews_section.dart
+│   │           ├── event_review_card.dart
+│   │           ├── event_faq_section.dart
+│   │           ├── event_faq_tile.dart
+│   │           ├── event_booking_section.dart
+│   │           ├── event_date_picker.dart
+│   │           ├── event_time_selector.dart
+│   │           ├── event_ticket_type_dropdown.dart
+│   │           ├── event_quantity_row.dart
+│   │           ├── event_total_row.dart
+│   │           └── event_related_section.dart
+│   │
+│   ├── booking/
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       │   └── booking_flow_provider.dart
+│   │       ├── screens/
+│   │       │   └── booking_confirmation_screen.dart
+│   │       └── widgets/
+│   │           ├── booking_summary_card.dart
+│   │           └── booking_success_content.dart
+│   │
+│   ├── tickets/
+│   │   ├── data/
+│   │   │   ├── models/
+│   │   │   │   ├── ticket_model.dart
+│   │   │   │   └── reservation_model.dart
+│   │   │   ├── repositories/
+│   │   │   │   └── tickets_repository_impl.dart
+│   │   │   └── datasources/
+│   │   │       └── tickets_remote_datasource.dart
+│   │   ├── domain/
+│   │   │   ├── entities/
+│   │   │   │   ├── ticket.dart
+│   │   │   │   └── reservation.dart
+│   │   │   └── repositories/
+│   │   │       └── tickets_repository.dart
+│   │   └── presentation/
+│   │       ├── providers/
+│   │       │   └── tickets_provider.dart
+│   │       ├── screens/
+│   │       │   ├── tickets_screen.dart
+│   │       │   └── ticket_detail_screen.dart
+│   │       └── widgets/
+│   │           ├── tickets_tab_bar.dart
+│   │           ├── upcoming_ticket_card.dart
+│   │           ├── past_ticket_card.dart
+│   │           └── ticket_detail_content.dart
+│   │
+│   └── profile/
+│       ├── data/
+│       │   ├── models/
+│       │   │   ├── profile_model.dart
+│       │   │   └── preference_model.dart
+│       │   ├── repositories/
+│       │   │   └── profile_repository_impl.dart
+│       │   └── datasources/
+│       │       └── profile_remote_datasource.dart
+│       ├── domain/
+│       │   ├── entities/
+│       │   │   ├── profile.dart
+│       │   │   └── preference.dart
+│       │   └── repositories/
+│       │       └── profile_repository.dart
+│       └── presentation/
+│           ├── providers/
+│           │   ├── profile_provider.dart
+│           │   └── preferences_provider.dart
+│           ├── screens/
+│           │   ├── profile_screen.dart
+│           │   ├── preferences_screen.dart
+│           │   ├── favourites_screen.dart
+│           │   └── help_screen.dart
+│           └── widgets/
+│               ├── profile_header.dart
+│               ├── profile_menu_item.dart
+│               ├── profile_menu_list.dart
+│               ├── interest_chips_section.dart
+│               ├── notifications_section.dart
+│               └── profile_desktop_layout.dart
+│
+├── data/
+│   └── mock/
+│       ├── mock_events.dart
+│       ├── mock_categories.dart
+│       ├── mock_reviews.dart
+│       ├── mock_cities.dart
+│       ├── mock_moods.dart
+│       ├── mock_tickets.dart
+│       └── mock_faqs.dart
+│
+└── gen/                                    # Generated files (freezed, json, riverpod)
+🎨 DESIGN THEME — EXACT SPECIFICATIONS
+Color Palette:
+dart
+class AppColors {
+  // ═══════════════════════════════════════════
+  // Backgrounds
+  // ═══════════════════════════════════════════
+  static const background = Color(0xFF0A1A1A);         // Very deep dark teal — main background
+  static const backgroundDarker = Color(0xFF081515);   // Darker — app bar and nav bar bg
+  static const surface = Color(0xFF112222);            // Card & elevated surface bg
+  static const surfaceVariant = Color(0xFF1A2E2E);     // Hover / higher surface
+  static const surfaceElevated = Color(0xFF1E3333);    // Modals and bottom sheets
+  // ═══════════════════════════════════════════
+  // Borders
+  // ═══════════════════════════════════════════
+  static const cardBorder = Color(0xFF2A4040);         // Subtle card border
+  static const inputBorder = Color(0xFF2A4040);        // Input border (unfocused)
+  static const inputBorderFocused = Color(0xFFE8A838); // Input border (focused) — gold
+  static const chipBorder = Color(0xFF3A5555);         // Chip border
+  // ═══════════════════════════════════════════
+  // Primary (Gold/Amber)
+  // ═══════════════════════════════════════════
+  static const primary = Color(0xFFE8A838);            // Golden amber — buttons, links, accents
+  static const primaryDark = Color(0xFFD4942E);        // Pressed/tap state
+  static const primaryLight = Color(0xFFF5C462);       // Hover state
+  static const primarySurface = Color(0x1AE8A838);     // 10% gold — selected chip bg
+  static const onPrimary = Color(0xFF1A1A0A);          // Text on gold buttons — near black
+  // ═══════════════════════════════════════════
+  // Text
+  // ═══════════════════════════════════════════
+  static const textPrimary = Color(0xFFFFFFFF);        // White headings
+  static const textSecondary = Color(0xFFB0C4C4);      // Body text — gray-teal
+  static const textTertiary = Color(0xFF7A9494);       // Placeholder and faint text
+  static const textGold = Color(0xFFE8A838);           // Gold labels, section headers
+  static const textOnDark = Color(0xFFCCDDDD);         // Text on very dark surfaces
+  // ═══════════════════════════════════════════
+  // Category Label Colors (on event cards)
+  // ═══════════════════════════════════════════
+  static const categoryLiveMusic = Color(0xFFE8A838);  // Gold
+  static const categoryCulture = Color(0xFFCC66CC);    // Purple/Magenta
+  static const categoryFamily = Color(0xFFFF6B8A);     // Pink
+  static const categoryWellness = Color(0xFF66CC99);   // Green
+  static const categoryFoodDrink = Color(0xFFFF8C42);  // Orange
+  // ═══════════════════════════════════════════
+  // Category Chip Icon Colors
+  // ═══════════════════════════════════════════
+  static const chipIconMusic = Color(0xFFE85555);      // Red — music note
+  static const chipIconFamily = Color(0xFFFF6B8A);     // Pink — heart
+  static const chipIconWellness = Color(0xFF66CC99);   // Green — leaf
+  static const chipIconCulture = Color(0xFF5599CC);    // Blue — compass
+  static const chipIconFood = Color(0xFFFF8C42);       // Orange — utensils
+  // ═══════════════════════════════════════════
+  // Mood Accent Colors (bottom bar on mood cards)
+  // ═══════════════════════════════════════════
+  static const moodHalloween = Color(0xFFE85555);      // Red
+  static const moodBudget = Color(0xFF66CC99);         // Green
+  static const moodNightlife = Color(0xFFFF6B8A);      // Pink
+  static const moodCandlelight = Color(0xFFE8A838);    // Gold
+  // ═══════════════════════════════════════════
+  // Semantic
+  // ═══════════════════════════════════════════
+  static const star = Color(0xFFE8A838);               // Rating stars
+  static const success = Color(0xFF66CC99);            // Green success
+  static const error = Color(0xFFE85555);              // Red error
+  static const warning = Color(0xFFFFAA33);            // Orange warning
+  static const info = Color(0xFF5599CC);               // Blue info
+  // ═══════════════════════════════════════════
+  // Dividers & Lines
+  // ═══════════════════════════════════════════
+  static const divider = Color(0xFF1E3535);            // Section divider
+  static const dividerLight = Color(0xFF253D3D);       // Lighter divider
+  // ═══════════════════════════════════════════
+  // Navigation
+  // ═══════════════════════════════════════════
+  static const navInactive = Color(0xFF7A9494);        // Inactive icon
+  static const navActive = Color(0xFFE8A838);          // Active icon — gold
+  static const navBarBg = Color(0xFF0D1E1E);           // Nav bar background
+  // ═══════════════════════════════════════════
+  // Overlays
+  // ═══════════════════════════════════════════
+  static const overlay = Color(0xCC000000);            // 80% black — modal backdrop
+  static const overlayLight = Color(0x66000000);       // 40% black — image gradient
+  static const imageGradientStart = Color(0x00000000); // Transparent
+  static const imageGradientEnd = Color(0xCC0A1A1A);   // Dark gradient bottom
+  // ═══════════════════════════════════════════
+  // Shadows
+  // ═══════════════════════════════════════════
+  static const shadowColor = Color(0x33000000);
+  // ═══════════════════════════════════════════
+  // Special Emphasis
+  // ═══════════════════════════════════════════
+  static const trendingBadgeBg = Color(0xFF1A3030);    // Trending badge bg
+  static const trendingNumber = Color(0xFF66CC99);     // Green number on trending badge
+  static const eventOriginalBorder = Color(0xFFE8A838);// "event Original" badge border
+}
+Shadows:
+dart
+class AppShadows {
+  static const cardShadow = [
+    BoxShadow(color: Color(0x1A000000), blurRadius: 12, offset: Offset(0, 4)),
+  ];
+  static const elevatedShadow = [
+    BoxShadow(color: Color(0x33000000), blurRadius: 24, offset: Offset(0, 8)),
+  ];
+  static const modalShadow = [
+    BoxShadow(color: Color(0x4D000000), blurRadius: 32, offset: Offset(0, -8)),
+  ];
+}
+Gradients:
+dart
+class AppGradients {
+  // Hero image overlay — transparent top to dark bottom
+  static const imageOverlay = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Colors.transparent, Color(0xCC0A1A1A)],
+    stops: [0.3, 1.0],
+  );
+  // App bar fade gradient
+  static const appBarGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [Color(0xFF081515), Color(0x000A1A1A)],
+  );
+  // Gold gradient for button hover
+  static const primaryGradient = LinearGradient(
+    colors: [Color(0xFFE8A838), Color(0xFFF5C462)],
+  );
+}
+Typography (Google Fonts — DM Sans or Plus Jakarta Sans):
+dart
+class AppTypography {
+  // Hero titles (home page)
+  // fontSize: 32 mobile / 40 desktop, weight: 800, color: white, height: 1.3
+  // Section labels (gold, above headings)
+  // fontSize: 12, weight: 700, UPPERCASE, letterSpacing: 2.0, color: gold
+  // Section headings
+  // fontSize: 26 mobile / 28-32 desktop, weight: 700, color: white, height: 1.3
+  // Card titles
+  // fontSize: 16, weight: 600, color: white, height: 1.4
+  // Body text
+  // fontSize: 14, weight: 400, color: textSecondary, height: 1.6
+  // Body small
+  // fontSize: 12, weight: 400, color: textTertiary, height: 1.5
+  // Category labels
+  // fontSize: 12, weight: 700, letterSpacing: 1.0, UPPERCASE, color varies by category
+  // Buttons (large)
+  // fontSize: 16, weight: 600, color: onPrimary (near-black on gold)
+  // Price (large)
+  // fontSize: 28, weight: 800, color: white
+  // Price (small, on cards)
+  // fontSize: 16, weight: 700, color: white
+  // Rating
+  // fontSize: 14, weight: 700, color: gold
+  // Gold links
+  // fontSize: 14, weight: 600, color: gold
+}
+Dimensions & Spacing:
+dart
+class AppDimensions {
+  // Spacing
+  static const s2 = 2.0;  static const s4 = 4.0;  static const s6 = 6.0;
+  static const s8 = 8.0;  static const s10 = 10.0; static const s12 = 12.0;
+  static const s16 = 16.0; static const s20 = 20.0; static const s24 = 24.0;
+  static const s32 = 32.0; static const s40 = 40.0; static const s48 = 48.0;
+  static const s56 = 56.0; static const s64 = 64.0; static const s80 = 80.0;
+  // Page padding (horizontal)
+  static const pagePaddingMobile = 20.0;
+  static const pagePaddingTablet = 40.0;
+  static const pagePaddingDesktop = 80.0;
+  static const pagePaddingWide = 120.0;
+  // Border radius
+  static const radiusSmall = 8.0;
+  static const radiusMedium = 12.0;
+  static const radiusLarge = 16.0;
+  static const radiusXLarge = 20.0;
+  static const radiusRound = 100.0;    // Fully rounded pill shape
+  // Heights
+  static const appBarHeight = 64.0;
+  static const webNavBarHeight = 72.0;
+  static const bottomNavHeight = 72.0;
+  static const searchBarHeight = 52.0;
+  static const chipHeight = 40.0;
+  static const buttonHeightLarge = 52.0;
+  static const buttonHeightMedium = 44.0;
+  // Card sizes
+  static const eventCardWidth = 260.0;
+  static const eventCardImageHeight = 180.0;
+  static const heroCarouselHeight = 420.0;
+  static const heroCarouselHeightDesktop = 500.0;
+  static const moodCardHeight = 200.0;
+  static const categoryTileHeight = 56.0;
+  static const thumbnailSize = 64.0;
+  static const mapPreviewHeight = 180.0;
+  // Max content width (Desktop)
+  static const maxContentWidth = 1440.0;
+  // Border widths
+  static const borderWidth = 1.0;
+  static const borderWidthThick = 1.5;
+  static const borderWidthFocused = 2.0;
+  // Icon sizes
+  static const iconSmall = 16.0;
+  static const iconMedium = 20.0;
+  static const iconLarge = 24.0;
+  // Avatar sizes
+  static const avatarSmall = 36.0;
+  static const avatarMedium = 48.0;
+  static const avatarLarge = 64.0;
+}
+📄 SCREEN-BY-SCREEN SPECIFICATION
+1. HOME SCREEN ("For you" tab) — Route: /
+A. Custom App Bar:
+
+Left: "event." logo — "event" white bold (~28px), "." in gold
+Center-right: City selector "📍 London ∨" — gold pin icon, white "London" text, dropdown chevron. Tapping opens City Selector Modal
+Far right: Profile avatar circle icon (outlined, gray-teal, 36px)
+B. Hero Section:
+
+Gold uppercase label: "GOOD PLANS START HERE" (12px, letterSpacing: 2.0)
+Main heading: "Discover the extraordinary." (32-36px bold, white, gold "." at end)
+Desktop subtitle: "Your city. Your people. Your next unforgettable moment."
+C. Search Bar:
+
+Rounded container (border: 1px cardBorder, bg: surface, radius: 12px, height: 52px)
+Left: Search icon (gray, 20px)
+Placeholder: "Search experiences, artists, places..." (textTertiary)
+Right: Filter sliders icon button — tapping opens Filter Modal
+D. Category Chips (horizontal scroll):
+
+Chips with icons:
+All (selected = gold bg, black text)
+🎵 Live Music (red icon)
+❤️ Family (pink icon)
+🌿 Wellness (green icon)
+🧭 Culture (blue icon)
+🍴 Food & Drink (orange icon)
+Unselected: outlined with chipBorder, white text, colored icon
+Selected: gold background, black text, no icon color change
+Height: 40px, radius: 100px (pill), gap: 10px
+E. Hero Carousel (PageView):
+
+Full-width cards with background image, dark gradient overlay from bottom
+Top-left badge: "THE EVENT EDIT" pill (semi-transparent bg Color(0x33000000), sparkle icon, gold text, radius: 100px, padding: 8px 16px)
+Headline: "A little candlelight. An unforgettable night." (bold white, ~28px)
+Subtitle: "Rediscover the music you love, in a setting you'll never forget." (textSecondary, 14px)
+CTA Button: "Discover Candlelight →" (gold bg, black text, pill shape, height: 44px)
+Bottom: page indicator dots (active: gold, 24px wide capsule; inactive: gray, 8px circle) + left/right circular arrow buttons (36px diameter, border: cardBorder)
+Auto-scroll every 5 seconds with Curves.easeInOutCubic
+Height: 420px mobile, 500px desktop
+F. Trust Badges Row:
+
+3 items in a horizontal row:
+"✅ Handpicked experiences"
+"⭐ Loved by millions"
+"🎫 A world of good plans"
+Small gold icons (16px) + text in textSecondary, font 12px
+Vertical spacing above: 16px, below: 40px
+G. Trending Section:
+
+Gold uppercase label: "THE CITY'S FAVOURITES"
+Heading: "Trending in London" + right-aligned "Explore all →" link (gold, 14px)
+Subtitle: "The experiences everyone's talking about" (textSecondary, 14px)
+Horizontal scrollable list (mobile) / 4-column grid (desktop):
+Each card (width: 260px in scroll, responsive in grid):
+Image container: height 180px, rounded 12px, BoxFit.cover
+Top-left overlay: numbered badge — number in green circle (20px diameter, bg: trendingNumber), "TRENDING" in white caps (11px, bold)
+Top-right overlay: Heart/favorite icon (outline white, 24px) — tappable
+Below image (in card body, bg: surface, padding: 16px):
+Category label: UPPERCASE, 11px, bold, letterSpacing: 1.0, color varies (gold for Live Music, purple for Culture, etc.)
+Event title: 16px, semibold, white, max 2 lines with ellipsis
+Location row: pin icon (14px, textTertiary) + venue name (14px, textSecondary)
+Divider line (1px, divider color)
+Bottom row: "From £XX.00" (16px, bold, white) + star icon (14px, gold) + rating (14px, bold, gold)
+Full card: border 1px cardBorder, rounded 16px, bg: surface
+Gap between cards: 16px
+H. Inspiration Section ("Make it a moment"):
+
+Gold label: "MAKE IT A MOMENT"
+Heading: "A little inspiration goes a long way" + "Find your thing →" (gold link, right-aligned)
+3 large landscape cards with background image + gradient overlay:
+Each card: height 280px mobile / 300px desktop, rounded 16px
+Category label at bottom-left: UPPERCASE, 11px, bold, white
+Title: 20px, bold, white
+Arrow "→" icon at bottom-right
+Cards:
+"LIVE MUSIC — Music that moves you →"
+"PLANS WITH YOUR PEOPLE — A little out of the ordinary →"
+"ART & IMMERSIVE EXPERIENCES — Step into something new →"
+Layout: horizontal scroll (mobile), 3-column grid (desktop)
+I. "More Good Things" Section:
+
+Gold label: "WORTH MAKING TIME FOR"
+Heading: "More good things ahead"
+Subtitle: "Something new, something unexpected, something you."
+Grid of standard event cards (2 columns mobile, 3-4 desktop) with heart icons
+2. SEARCH SCREEN — Route: /search
+A. Header:
+
+Gold label: "FIND YOUR THING IN LONDON"
+Heading: "Search." (large bold, gold ".")
+B. Search Input:
+
+Search field (height: 52px, radius: 12px, border: cardBorder): "Experiences, artists, venues..."
+Right side: List | Map toggle — "List" is default selected (gold bg, black text), "Map" outlined. Toggle container: border 1px cardBorder, rounded 8px, height: 40px
+C. Popular Searches:
+
+Heading: "Popular searches" (20px, bold, white)
+Chip pills with search icon (16px, textTertiary): Candlelight, Immersive, Rooftop, Festival, Garden, Hans Zimmer
+Each chip: height 36px, border 1px chipBorder, rounded 100px, bg: transparent, text: white 14px
+Wrapping flow layout with 8px gap
+D. Browse by Mood:
+
+Heading: "Browse by mood" (20px, bold, white)
+Grid of image cards (2 col mobile, 4 col desktop):
+Each card: height 200px, rounded 12px, BoxFit.cover image
+Bottom overlay: icon + mood name (16px, bold, white) on semi-transparent bg
+Colored accent bar at very bottom: 3px height, full width, mood-specific color:
+"🎃 Halloween" → red bar
+"💰 On a budget" → green bar
+"🎉 Nightlife & party" → pink bar
+"🎵 Candlelight" → gold bar
+Gap: 16px
+E. Search Results (after query/mood selection):
+
+Category heading + count: "With the kids — 1 experiences" (20px bold + 14px secondary)
+"Clear all" gold link (right-aligned)
+Horizontal result cards (list layout):
+Thumbnail image (left, 100x100px, rounded 12px)
+Right content: title (16px, bold), venue + pin icon (14px, secondary), date/time (14px, secondary), star rating + price (bold)
+Full card: bg surface, border cardBorder, rounded 12px, padding 12px
+3. DISCOVER SCREEN — Route: /discover
+A. Header:
+
+Gold label: "FIND YOUR KIND OF EXTRAORDINARY"
+Heading: "Discover London." (gold ".")
+Subtitle: "Your next great story starts with a good plan." (textSecondary)
+B. Search bar: "Search experiences in London" (same styling as home)
+
+C. Filter Chips Row:
+
+"📅 Any date" chip (calendar icon), "⚙️ Category" chip (filter icon), "↕ Recommended ∨" sort dropdown chip
+Each chip: height 40px, border chipBorder, rounded 100px, icon 16px, text 14px
+Gap: 10px
+D. Popular Searches: Same chips as search page (Candlelight, Concerts, Gardens, Immersive, Rooftop, Coldplay)
+
+E. "A world of possibilities" — Category Grid:
+
+2-column grid, each tile:
+Small square thumbnail (left, 48x48px, rounded 8px)
+Category name (right, 14px, semibold, white)
+Card: bg surface, rounded 12px, border cardBorder, height 56px, padding 8px
+Categories: Candlelight Concerts, Immersive Experiences, Music Events, Family Adventures, Art & Culture, Wellness & Mindfulness, Food & Drink, Plans for Two
+Gap: 12px
+F. "Handpicked for you":
+
+Heading + compass icon + "8 extraordinary experiences" (textSecondary)
+Horizontal scroll of standard event cards with heart icons
+4. EVENT DETAIL SCREEN — Route: /event/:id
+Long scrollable page, sections top to bottom:
+
+A. Back Navigation:
+
+"← All experiences" back link (left, textSecondary, 14px)
+Right side: Share icon (outlined, 24px) + Heart/favorite icon (outlined, 24px)
+Padding: 16px horizontal, 12px vertical
+B. Event Header:
+
+Category: "LIVE MUSIC" (gold, uppercase, 12px, bold) + "event Original" outlined badge (gold border 1px, rounded 100px, gold text 12px, padding 4px 12px)
+Title: "Candlelight: A Tribute to Coldplay" (bold, 28px, white)
+Meta row (icons 16px, text 14px): ⭐ 4.9 (gold, bold) + "(1,248 reviews)" (textSecondary) + 📍 "Southwark Cathedral" (textSecondary) + ⏱ "60 minutes" (textSecondary)
+Vertical gap between items: 8px
+C. Image Gallery:
+
+Large hero image (rounded 16px, height 300px, BoxFit.cover)
+Below: horizontal thumbnail strip (gap: 8px):
+4-5 small thumbnails (64x64px, rounded 8px)
+Selected one has gold border 2px
+Tapping swaps the hero image with 300ms fade animation
+D. Feature Badges Row:
+
+"✅ event selection" | "🎫 Mobile tickets" | "✨ Unforgettable moments"
+Gold icons (16px) + textSecondary text (13px)
+Horizontal row with 24px gap, top/bottom padding 16px
+E. "About this experience":
+
+Heading (bold, 22px) + paragraph body text (textSecondary, 14px, line-height 1.6)
+Use ReadMore widget: initial 4 lines, "Read more" link in gold
+F. "What makes it extraordinary":
+
+3 bullet points with sparkle icons (gold, 20px):
+"An extraordinary setting, carefully chosen for the experience"
+"A beautiful way to make memories with your favourite people"
+"An intimate, immersive atmosphere from start to finish"
+Each bullet: 16px gap between icon and text, 12px vertical gap between bullets
+Text: 14px, textSecondary
+G. "Good to know":
+
+Icon-label pairs in vertical list (20px gap between items):
+📅 Date: "Multiple dates available"
+⏱ Duration: "60 minutes"
+📍 Location: "Southwark Cathedral"
+♿ Accessibility: "Contact the venue for access information"
+Each item: gold icon (24px), bold label (14px, white), value below (14px, textSecondary)
+Divider between sections
+H. "The venue":
+
+Heading "The venue" (22px, bold)
+Map preview container (height: 180px, rounded 12px, border 1px gold, gold pin icon centered)
+Venue name: pin icon + "Southwark Cathedral" (18px, bold) + "London, United Kingdom" (14px, textSecondary)
+🚇 "Underground · nearest station within a 10-minute walk" (14px, textSecondary)
+"View on Google Maps →" gold link (opens url_launcher)
+I. "A few words from our community":
+
+Heading + ⭐ 4.9 rating badge (right-aligned)
+"Illustrative reviews for this sample collection" (textTertiary, 13px)
+Review cards:
+Name (bold, 16px) + date right-aligned (textSecondary, 13px, e.g. "October 2026")
+5 gold star icons (16px each)
+Review text (14px, textSecondary, line-height 1.6)
+Divider between reviews
+Show 2-3 reviews
+J. "Your questions, answered" (FAQ):
+
+Heading (22px, bold)
+Expandable tiles (ExpansionTile custom-styled):
+Question: 16px, semibold, white
+Chevron icon (right side): rotates 180° on expand (300ms animation)
+Answer: 14px, textSecondary, line-height 1.6
+Divider between items (1px, divider color)
+Questions:
+"When should I arrive?" → "We recommend arriving 30 minutes before the selected start time. Final entry information will be included with your ticket."
+"Can I change or cancel my tickets?" → "Changes and cancellation terms depend on the event and ticket type. Review the event's final terms before making a real purchase."
+"Where will I find my tickets?" → "Your sample reservation appears in the Tickets page. Real ticket delivery and payment are not connected in this version."
+K. Booking Section:
+
+Gold uppercase label: "YOUR NEXT UNFORGETTABLE MOMENT" (12px, letterSpacing: 2.0)
+
+"From £27.00 / person" (price: 28px bold white, "/ person": 14px textSecondary)
+
+"✓ Available in the sample collection" (success green check icon + gold text, 14px)
+
+Choose your date: Date picker input field showing "10/24/2026" with calendar icon right-aligned. Height: 52px, border 1px cardBorder, rounded 12px. Tapping opens showDatePicker
+
+Choose your time: 3 time slot chips in a row — "17:00", "19:00" (selected = gold bg, black text), "21:00". Each: width 100px, height 44px, pill shape. Unselected: border cardBorder, white text
+
+Ticket type: Dropdown with gold border (1.5px) — "Standard" selected, subtitle "General admission" below. Height: 52px, rounded 12px, dropdown chevron right
+
+Tickets: Quantity selector row — minus button (circle 36px, border cardBorder, "−" icon), count "2" (bold, 18px), plus button (circle 36px, border cardBorder, "+" icon). Right side: "£27.00 per person" (14px, textSecondary)
+
+Total: "Total (2 tickets)" (16px, white) — "£54.00" right-aligned (18px, bold, gold)
+
+CTA: "Get tickets →" large gold button (full width, height 52px, pill shape, black text 16px bold)
+
+Disclaimer: "ⓘ Sample reservation only. No payment will be taken." (textTertiary, 13px, info icon)
+
+L. "More moments you'll love":
+
+"Explore all →" gold link (right-aligned)
+Horizontal scroll of related event cards (same as standard event cards)
+5. CHECKOUT CONFIRMATION — Modal/Dialog
+Heading: "Your experience, all set." (24px, bold)
+Subtitle: "Review your sample reservation. This is not a real purchase." (14px, textSecondary)
+Event image (rounded 12px, height 180px)
+Event title (gold, bold, 18px)
+Details rows (label left, value right, 14px):
+Date & time: "2026-10-25 · 19:00"
+Tickets: "2 × Standard"
+Sample total: "£48.00" (gold, bold)
+Disclaimer text (13px, textTertiary)
+CTA: "Confirm sample reservation →" (gold pill button, full width, height 52px)
+Modal: bg surfaceElevated, rounded top 20px, max-width 480px on desktop
+6. BOOKING SUCCESS — Modal/Dialog
+Heading: "A good plan is on the cards." (24px, bold)
+Subtitle: "Your sample reservation has been added to your tickets." (14px, textSecondary)
+Animated gold checkmark in circle (64px diameter): circle draws (stroke animation) → checkmark appears (total 600ms)
+Event name (bold, 16px) + ticket details (14px, textSecondary)
+CTA: "View my tickets →" (gold pill button, full width, height 52px)
+Close X button (top-right, 24px, textTertiary)
+Modal: bg surfaceElevated, rounded 20px
+7. TICKETS SCREEN — Route: /tickets
+A. Header:
+
+Gold label: "GOOD PLANS START HERE"
+Heading: "Your tickets" (28px, bold)
+Subtitle: "Good times ahead. Keep them close." (14px, textSecondary)
+B. Tab Bar:
+
+2 tabs: Upcoming (selected = gold text + gold underline 2px + badge count circle 20px diameter), Past (gray text)
+Underline animates with AnimatedContainer when switching tabs (200ms)
+Badge: gold bg, white text, 12px, positioned top-right of tab text
+C. Ticket Cards:
+
+Event image (wide banner, height 180px, top corners rounded 16px, BoxFit.cover)
+Card body (bg: surface, border: cardBorder, bottom corners rounded 16px, padding: 16px):
+Gold uppercase label: "SAMPLE RESERVATION" (11px, letterSpacing: 1.0)
+Event title (bold, 18px, white)
+Date/time row: calendar icon + "2026-10-25 · 19:00" + pin icon + "Historic London" (14px, textSecondary)
+Divider (1px)
+Bottom row: "2 tickets · Standard" (14px, textSecondary) + "View reservation >" gold link (14px, right-aligned)
+D. Disclaimer: "ⓘ Sample reservations are saved only during this visit. No real tickets or payments are issued." (textTertiary, 13px)
+
+Desktop layout: Image left + details right (horizontal card), wider spacing
+
+8. TICKET DETAIL — Modal: /tickets/:id
+Event image banner (top corners rounded 16px, height 200px)
+Event title (bold, 22px, white)
+Details table (rows with label left, value right-aligned):
+Reference: "FEV-2097544" (14px, white)
+Date: "2026-10-25"
+Time: "19:00"
+Venue: "Historic London"
+Tickets: "2 × Standard"
+Sample total: "£48.00" (gold, bold)
+Each row: height 48px, divider between rows
+Button: "Need a hand? →" (outlined pill button, full width, height 48px, white text, border cardBorder)
+Modal: bg surfaceElevated, rounded 20px
+9. PROFILE SCREEN — Route: /profile
+Mobile:
+
+A. Header:
+
+Gold label: "GOOD PLANS START HERE"
+Heading: "Your little corner of event" (24px, bold)
+B. Profile Card:
+
+Avatar circle icon (outlined gold, 48px diameter)
+"Experience seeker" (bold, 18px, white)
+"So many good things ahead." (14px, textSecondary)
+Bottom padding: 16px, then divider
+C. Menu Items (vertical list of tappable cards): Each card: icon (gold, 24px, left) + label (white, 16px, center) + chevron ">" (right, textTertiary). Card: bg surface, rounded 12px, border cardBorder, height 56px, padding 16px horizontal. Gap between cards: 8px.
+
+📍 London (opens city selector)
+❤️ My favourites
+🎫 My tickets
+👑 event Club & rewards
+🎁 Gift cards
+👤 My preferences (highlighted with gold border 1.5px when active)
+❓ Help & support
+Desktop Layout:
+
+Side-by-side: Left sidebar (profile card + menu items, width ~350px, right border 1px divider) | Right content panel (shows selected menu content)
+Default right panel: My Preferences content
+Menu item active state: gold left border 3px + gold text + gold icon
+10. PREFERENCES SCREEN — Route: /profile/preferences
+A. "A little more you" heading (22px, bold, white) with sparkle icon (gold, 24px)
+
+Subtitle: "The things you love. The experiences you'll love next." (14px, textSecondary)
+B. "Your interests" section:
+
+Toggle chips: Live Music, Culture, Family, Wellness, Food & Drink
+Selected: gold border 1.5px + gold text + checkmark icon ✓ (gold, 16px)
+Unselected: border chipBorder, white text
+Height: 40px, pill shape, gap: 10px
+Animation: border color and text color transition 200ms
+C. "Stay in the loop" section (bell icon, gold):
+
+"Good plans in your inbox" — toggle (custom checkbox)
+"Fresh finds and handpicked experiences." (13px, textSecondary)
+Off state: empty checkbox with cardBorder border
+"Experience reminders" — toggle (on = gold checkbox with white checkmark)
+"A heads-up before your next good plan." (13px, textSecondary)
+On state: filled gold checkbox with white ✓
+🔲 MODALS & OVERLAYS
+City Selector Modal:
+Title: "Select your city" (bold, 24px)
+Subtitle: "A new city. A world of possibilities." (14px, textSecondary)
+Close X button (top-right, 24px)
+Search field with gold border 1.5px: "Search by city" (height 48px, rounded 12px)
+City list (each row height 56px, divider between):
+Gold pin icon (20px) + city name (bold, 16px) + country (14px, textSecondary, separated by space) + checkmark if selected (gold, right-aligned)
+Cities: London (United Kingdom ✓), São Paulo (Brazil), Madrid (Spain), New York (United States), Paris (France), Barcelona (Spain)
+Modal: bg surfaceElevated, top corners rounded 20px
+Filter Modal (Bottom Sheet):
+Height: 85% of screen (scrollable)
+
+Handle bar top center (40px wide, 4px tall, gray rounded bar)
+
+Title with filter icon: "Find your perfect plan" (bold, 22px)
+
+Subtitle: "Just the experiences you're looking for." (14px, textSecondary)
+
+Close X button (top-right)
+
+Date section: Heading "📅 Date", quick chips ("Any date" = selected gold, "24 Oct", "25 Oct"), full calendar picker (October 2026 grid with Sun-Sat columns, < > month navigation arrows, selected day: gold circle bg, today: gold underline)
+
+Category section: Heading "Category", chips (All, Live Music, Family, Wellness, Culture, Food & Drink) — same styling as home page chips
+
+Maximum price: Heading "Maximum price" + "£300" value (gold, right-aligned). Slider: gold track, gold circle thumb (20px), labels "£0" (left) — "£300" (right). Use custom Slider with gold active track color
+
+Bottom (sticky/fixed): Row with "Reset" outlined button (left, height 48px, 100px wide) + "✓ Apply filters" gold button (right, expanded width, height 48px)
+
+Gap between sections: 32px
+
+Modal: bg surfaceElevated, top corners rounded 20px
+
+🧭 NAVIGATION & ROUTING (go_router)
+GoRouter Configuration:
+dart
+final GoRouter appRouter = GoRouter(
+  initialLocation: '/',
+  redirect: (context, state) {
+    // Check auth state — if not logged in → /login
+    return null;
+  },
+  routes: [
+    // Shell Route — shared scaffold with bottom nav (mobile) / top nav (desktop)
+    ShellRoute(
+      builder: (context, state, child) => ResponsiveScaffold(child: child),
+      routes: [
+        GoRoute(path: '/', name: 'home',
+          pageBuilder: (_, __) => const NoTransitionPage(child: HomeScreen())),
+        GoRoute(path: '/search', name: 'search',
+          pageBuilder: (_, __) => const NoTransitionPage(child: SearchScreen()),
+          routes: [
+            GoRoute(path: 'results', name: 'searchResults',
+              builder: (_, state) => SearchResultsScreen(query: state.uri.queryParameters['q'] ?? '')),
+          ]),
+        GoRoute(path: '/discover', name: 'discover',
+          pageBuilder: (_, __) => const NoTransitionPage(child: DiscoverScreen())),
+        GoRoute(path: '/tickets', name: 'tickets',
+          pageBuilder: (_, __) => const NoTransitionPage(child: TicketsScreen()),
+          routes: [
+            GoRoute(path: ':id', name: 'ticketDetail',
+              builder: (_, state) => TicketDetailScreen(ticketId: state.pathParameters['id']!)),
+          ]),
+        GoRoute(path: '/profile', name: 'profile',
+          pageBuilder: (_, __) => const NoTransitionPage(child: ProfileScreen()),
+          routes: [
+            GoRoute(path: 'preferences', name: 'preferences',
+              builder: (_, __) => const PreferencesScreen()),
+            GoRoute(path: 'favourites', name: 'favourites',
+              builder: (_, __) => const FavouritesScreen()),
+          ]),
+      ],
+    ),
+    // Event Detail — outside shell (no bottom nav)
+    GoRoute(path: '/event/:id', name: 'eventDetail',
+      builder: (_, state) => EventDetailScreen(eventId: state.pathParameters['id']!),
+      routes: [
+        GoRoute(path: 'book', name: 'booking',
+          builder: (_, state) => BookingConfirmationScreen(eventId: state.pathParameters['id']!)),
+      ]),
+    // Auth
+    GoRoute(path: '/login', name: 'login', builder: (_, __) => const LoginScreen()),
+    GoRoute(path: '/register', name: 'register', builder: (_, __) => const RegisterScreen()),
+  ],
+);
+Bottom Navigation Bar (Mobile only):
+5 tabs with outlined icons (inactive: navInactive gray, active: navActive gold with label):
+
+For you — Home icon
+Search — Magnifying glass icon
+Discover — Compass icon
+Tickets — Ticket/binoculars icon
+Profile — Person outline icon
+Active tab: gold icon + gold label. Inactive: gray icon + gray label. Top border: 1px divider. Height: 72px. Bg: navBarBg. Fixed position, does not scroll.
+
+Top Navigation Bar (Desktop only — replaces bottom nav):
+Left: "event." logo
+Center: Nav links with icons — 🏠 For you | 🔍 Search | 🧭 Discover | 🎫 Tickets — active one has gold underline 2px below
+Right: 📍 London ∨ city selector + profile avatar circle
+Bg: backgroundDarker, height: 72px, bottom border: 1px divider
+Position: sticky/fixed at top
+📱 RESPONSIVE DESIGN (responsive_framework)
+Breakpoints:
+dart
+ResponsiveBreakpoints.builder(
+  breakpoints: const [
+    Breakpoint(start: 0, end: 450, name: MOBILE),
+    Breakpoint(start: 451, end: 800, name: TABLET),
+    Breakpoint(start: 801, end: 1920, name: DESKTOP),
+    Breakpoint(start: 1921, end: double.infinity, name: '4K'),
+  ],
+)
+Layout Rules:
+Element	Mobile (≤450)	Tablet (451-800)	Desktop (801+)
+Navigation	Bottom nav (5 tabs)	Bottom nav	Top nav bar (NO bottom nav)
+Trending grid	Horizontal scroll	2-col grid	4-col grid
+Mood grid	2-col	3-col	4-col
+Profile	Single column	Single column	Sidebar + content panel
+Page padding	20px	40px	80-120px
+Content width	100%	100%	max 1440px (centered)
+Hero carousel	420px height	460px	500px
+Event card	260px width (scroll)	280px	Responsive fill
+Event detail	Single column	Single column	2 columns (content + booking sidebar)
+Inspiration	Hidden/scroll	2-col	3-col
+Category grid	2-col	3-col	4-col
+🔐 SECURE STORAGE & AUTH
+dart
+class SecureStorageService {
+  final FlutterSecureStorage _storage;
+  // Keys
+  static const _accessTokenKey = 'access_token';
+  static const _refreshTokenKey = 'refresh_token';
+  static const _userIdKey = 'user_id';
+  static const _selectedCityKey = 'selected_city';
+  static const _userPreferencesKey = 'user_preferences';
+  // Methods
+  Future<void> saveAccessToken(String token);
+  Future<String?> getAccessToken();
+  Future<void> saveRefreshToken(String token);
+  Future<String?> getRefreshToken();
+  Future<void> saveUserId(String id);
+  Future<String?> getUserId();
+  Future<void> saveSelectedCity(String cityId);
+  Future<String?> getSelectedCity();
+  Future<void> clearAll();       // For logout
+  Future<bool> hasToken();       // Check token existence
+}
+Dio interceptor must:
+
+Read JWT from secure storage
+Attach as Authorization: Bearer <token> to all API requests
+On 401 response, attempt token refresh with refresh token
+On refresh failure, clear storage and redirect to login
+Log requests/responses in debug mode
+✨ ANIMATIONS & MICRO-INTERACTIONS
+Hero carousel: Auto-scroll every 5s with Curves.easeInOutCubic. Indicator dots animate width (active: 24px capsule, inactive: 8px circle, 200ms)
+Cards: Scale to 1.02 on hover (desktop) with AnimatedScale 200ms + elevated shadow increase
+Heart/favorite icon: Fill animation + bounce (scale 1.0 → 1.3 → 1.0, 400ms) + color change (white outline → red filled) using flutter_animate
+Bottom nav: Smooth icon color transition 200ms, subtle scale 1.0 → 1.05 → 1.0 on active
+Modals: Slide-up from bottom + fade (300ms, Curves.easeOutCubic)
+Chips: Border color and background color transition 200ms on select/deselect
+FAQ expand/collapse: Smooth expand 300ms + chevron rotation 180° animation
+Success checkmark: Circle stroke draw + checkmark appearance (600ms total)
+Shimmer loading: Animated gradient shimmer (surface → surfaceVariant → surface) on all content while loading
+Page transitions: Fade + slide (300ms) via GoRouter custom CustomTransitionPage
+Scroll parallax: Subtle parallax on hero images while scrolling
+Button press: Scale to 0.95 on tap-down + return on tap-up (100ms)
+Gallery image swap: 300ms fade transition when hero image changes
+Ticket cards stagger: Each card appears 100ms after the previous one on page load using flutter_animate stagger
+📦 STATE MANAGEMENT (Riverpod)
+Key providers:
+
+dart
+// City
+@riverpod class SelectedCity       // Current city state (default: London)
+@riverpod Future<List<City>> availableCities  // City list
+// Auth
+@riverpod class AuthState         // authenticated / unauthenticated / loading
+@riverpod Future<User?> currentUser
+// Home
+@riverpod Future<List<CarouselItem>> heroCarousel
+@riverpod Future<List<Event>> trendingEvents   // filtered by city
+@riverpod Future<List<Event>> featuredEvents
+@riverpod Future<List<InspirationItem>> inspirationItems
+@riverpod Future<List<Event>> moreEvents
+// Event Detail
+@riverpod Future<EventDetail> eventDetail(String eventId)
+@riverpod Future<List<Review>> eventReviews(String eventId)
+@riverpod Future<List<FaqItem>> eventFaqs(String eventId)
+@riverpod Future<List<Event>> relatedEvents(String eventId)
+// Search
+@riverpod class SearchQuery       // query string state
+@riverpod Future<List<Event>> searchResults  // debounced 500ms
+@riverpod Future<List<String>> popularSearches
+@riverpod Future<List<Mood>> browseMoods
+// Discover
+@riverpod Future<List<DiscoverCategory>> discoverCategories
+@riverpod Future<List<Event>> handpickedEvents
+@riverpod class DiscoverFilter    // date, category, sortBy, reset
+// Filters (for filter modal)
+@riverpod class ActiveFilter      // date, category, maxPrice, reset, apply
+// Booking
+@riverpod class BookingState      // date, timeSlot, ticketType, quantity, totalPrice, reset
+@riverpod Future<Reservation> confirmBooking(BookingRequest request)
+// Tickets
+@riverpod Future<List<Ticket>> upcomingTickets
+@riverpod Future<List<Ticket>> pastTickets
+@riverpod Future<TicketDetail> ticketDetail(String ticketId)
+@riverpod class TicketTab         // 0 = upcoming, 1 = past
+// Favorites
+@riverpod class Favorites         // Set<String> of event IDs, toggle(), isFavorite()
+// Preferences
+@riverpod class UserPreferences   // interests toggles, email toggle, reminders toggle
+// Image Gallery
+@riverpod class SelectedImageIndex  // int, select(index)
+Use AsyncValue from Riverpod for all async providers — handle .when(data:, loading:, error:) in UI with shimmer loading states and error widgets with retry buttons.
+
+🧪 MOCK DATA
+dart
+final mockEvents = [
+  Event(id: '1', title: 'Candlelight: A Tribute to Coldplay',
+    category: 'Live Music', categoryColor: AppColors.categoryLiveMusic,
+    venue: 'Southwark Cathedral', city: 'London',
+    price: 27.00, rating: 4.9, reviewCount: 1248,
+    duration: 60, isOriginal: true, trendingRank: 1,
+    images: ['url1', 'url2', 'url3', 'url4']),
+  Event(id: '2', title: 'LUMINISCENCE: An Immersive Journey',
+    category: 'Culture', categoryColor: AppColors.categoryCulture,
+    venue: 'Historic London', city: 'London',
+    price: 24.00, rating: 4.8, reviewCount: 856,
+    duration: 75, isOriginal: false, trendingRank: 2,
+    images: ['url1', 'url2']),
+  Event(id: '3', title: 'Primavera Sound Barcelona 2027',
+    category: 'Live Music', categoryColor: AppColors.categoryLiveMusic,
+    venue: 'Parc del Fòrum, Barcelona', city: 'Barcelona',
+    price: 275.00, rating: 4.9, reviewCount: 2341,
+    duration: 480, isOriginal: false, trendingRank: 3,
+    images: ['url1']),
+  Event(id: '4', title: 'The Enchanted Garden: After Dark',
+    category: 'Family', categoryColor: AppColors.categoryFamily,
+    venue: 'Royal Botanic Gardens', city: 'London',
+    price: 19.50, rating: 4.8, reviewCount: 567,
+    duration: 90, isOriginal: true, trendingRank: 4,
+    images: ['url1', 'url2', 'url3']),
+];
+final mockReviews = [
+  Review(name: 'Sophie M.', date: 'October 2026', rating: 5,
+    text: 'Such a beautiful experience. The atmosphere was incredible — we\'re already planning our next visit.'),
+  Review(name: 'Daniel R.', date: 'September 2026', rating: 5,
+    text: 'A really memorable evening and something a little different. A lovely plan to share with friends.'),
+];
+final mockCities = [
+  City(id: '1', name: 'London', country: 'United Kingdom', isSelected: true),
+  City(id: '2', name: 'São Paulo', country: 'Brazil'),
+  City(id: '3', name: 'Madrid', country: 'Spain'),
+  City(id: '4', name: 'New York', country: 'United States'),
+  City(id: '5', name: 'Paris', country: 'France'),
+  City(id: '6', name: 'Barcelona', country: 'Spain'),
+];
+final mockMoods = [
+  Mood(name: 'Halloween', icon: '🎃', accentColor: AppColors.moodHalloween),
+  Mood(name: 'On a budget', icon: '💰', accentColor: AppColors.moodBudget),
+  Mood(name: 'Nightlife & party', icon: '🎉', accentColor: AppColors.moodNightlife),
+  Mood(name: 'Candlelight', icon: '🎵', accentColor: AppColors.moodCandlelight),
+  Mood(name: 'Romantic', icon: '💕', accentColor: Color(0xFFCC66CC)),
+  Mood(name: 'Adventurous', icon: '🏔', accentColor: Color(0xFF5599CC)),
+  Mood(name: 'Relaxing', icon: '🧘', accentColor: Color(0xFF66CC99)),
+  Mood(name: 'Artistic', icon: '🎨', accentColor: Color(0xFFFF8C42)),
+];
+final mockDiscoverCategories = [
+  DiscoverCategory(name: 'Candlelight Concerts', imageUrl: '...'),
+  DiscoverCategory(name: 'Immersive Experiences', imageUrl: '...'),
+  DiscoverCategory(name: 'Music Events', imageUrl: '...'),
+  DiscoverCategory(name: 'Family Adventures', imageUrl: '...'),
+  DiscoverCategory(name: 'Art & Culture', imageUrl: '...'),
+  DiscoverCategory(name: 'Wellness & Mindfulness', imageUrl: '...'),
+  DiscoverCategory(name: 'Food & Drink', imageUrl: '...'),
+  DiscoverCategory(name: 'Plans for Two', imageUrl: '...'),
+];
+⚡ PERFORMANCE & BEST PRACTICES
+CachedNetworkImage with shimmer placeholder (bg: surface color) for all images
+AutoDispose on all providers that don't need persistence
+const constructors wherever possible
+ListView.builder and GridView.builder for all scrollable lists (lazy loading)
+RepaintBoundary around complex card widgets
+BoxFit.cover for all event images
+Pull-to-refresh (RefreshIndicator) on home, search, discover, tickets screens
+ScrollController for infinite scroll pagination on event lists
+Format currencies with intl: "£27.00" (2 decimal places, £ symbol)
+Locale-aware date formatting: "Sat 24 Oct · 19:00"
+Debouncer with 500ms delay for search input
+Error handling with AsyncValue — loading (shimmer), error (retry button), data states
+PopScope for managing back button in modals
+AutomaticKeepAliveClientMixin for bottom nav tabs (preserve scroll state)
+Consistent 16px gap between all list items
+Hero widget transitions for event images (home → detail)
+🌐 WEB-SPECIFIC
+Clean URLs without hash (usePathUrlStrategy())
+Responsive images with ConstrainedBox + maxWidth
+Hover effects (scale, shadow, opacity) on all interactive elements
+MouseRegion + SystemMouseCursors.click on clickable elements
+Keyboard navigation and focus management for accessibility
+SEO meta tags in index.html:
+html
+<title>event. — Discover the extraordinary</title>
+<meta name="description" content="Discover extraordinary experiences and book tickets for live music, culture, family events and more.">
+Google Fonts (DM Sans) preloaded in index.html to prevent FOUC
+Responsive favicon and PWA manifest
+📝 CRITICAL DESIGN RULES
+Brand name is "event." — always lowercase "event" followed by a gold period "."
+Currency is British Pounds (£), formatted as "£27.00"
+Language is English, direction is LTR
+Dark theme ONLY — no light mode toggle
+Design must feel premium, luxurious, and editorial — NOT generic Material Design
+Every section heading pattern: small gold UPPERCASE label above → large white heading below
+All CTA buttons: pill-shaped (radius 100px), gold background, near-black text, with "→" arrow
+All "Explore all →" links: gold text with arrow, right-aligned
+Cards always have: subtle border (cardBorder), surface background, 16px border radius
+Bottom nav bar: fixed position, does not scroll with content
+Desktop top nav bar: sticky/fixed at top of viewport
+No page should feel empty — always show shimmer loading or empty state with illustration
+Minimum touch target: 44×44px for all interactive elements
+Consistent section spacing: 40-48px vertical gap between major sections
+All images must have shimmer loading placeholders, never show broken image icons
+Scrollable horizontal lists should show partial next card as visual affordance for scrolling
